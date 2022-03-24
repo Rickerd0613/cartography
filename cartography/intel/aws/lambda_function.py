@@ -245,7 +245,7 @@ def sync_lambda_functions(
         data = get_lambda_data(boto3_session, region)
         load_lambda_functions(neo4j_session, data, region, current_aws_account_id, aws_update_tag)
         lambda_function_details = get_lambda_function_details(boto3_session, data, region)
-        load_lambda_function_details(neo4j_session, lambda_function_details, aws_update_tag)
+        load_lambda_function_details(neo4j_session, lambda_function_details, aws_update_tag)  # type: ignore
 
     cleanup_lambda(neo4j_session, common_job_parameters)
 
