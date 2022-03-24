@@ -17,7 +17,7 @@ import neo4j
 
 from cartography.graph.job import GraphJob
 from cartography.graph.statement import get_job_shortname
-from cartography.stats import get_stats_client
+from cartography.stats import _scoped_stats_client
 from cartography.stats import ScopedStatsClient
 
 if sys.version_info >= (3, 7):
@@ -67,7 +67,7 @@ def merge_module_sync_metadata(
     synced_type: str,
     update_tag: int,
     stat_handler: ScopedStatsClient,
-):
+) -> None:
     '''
     This creates `ModuleSyncMetadata` nodes when called from each of the individual modules or sub-modules.
     The 'types' used here should be actual node labels. For example, if we did sync a particular AWSAccount's S3Buckets,
@@ -111,8 +111,8 @@ def timeit(method: F) -> F:
     """
     # Allow access via `inspect` to the wrapped function. This is used in integration tests to standardize param names.
     @wraps(method)
-    def timed(*args, **kwargs):
-        stats_client = get_stats_client(None)
+    def timed(*args, **kwargs):  # type: ignore
+        stats_client = _scoped_stats_client  # global client
         if stats_client.is_enabled():
             # Example metric name "cartography.intel.aws.iam.get_group_membership_data"
             metric_name = f"{method.__module__}.{method.__name__}"
@@ -138,7 +138,7 @@ def aws_handle_regions(func: F) -> F:
         'UnrecognizedClientException',
     ]
 
-    def inner_function(*args, **kwargs):
+    def inner_function(*args, **kwargs):  # type: ignore
         try:
             return func(*args, **kwargs)
         except botocore.exceptions.ClientError as e:

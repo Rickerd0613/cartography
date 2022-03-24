@@ -38,7 +38,7 @@ def call_github_api(query: str, variables: str, token: str, api_url: str) -> Dic
     response_json = response.json()
     if "errors" in response_json:
         logger.error(response_json["errors"])
-    return response_json
+    return response_json  # type: ignore
 
 
 def fetch_page(token: str, api_url: str, organization: str, query: str, cursor: Optional[str] = None) -> Dict:
